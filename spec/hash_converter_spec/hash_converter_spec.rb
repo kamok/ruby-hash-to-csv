@@ -22,6 +22,9 @@ describe 'HashConverter' do
     let(:multiple_1_level) do
       File.new(File.join(File.dirname(__FILE__), 'test_files', 'multiple_1_level.csv'))
     end
+    let(:multiple_1_level_missing) do
+      File.new(File.join(File.dirname(__FILE__), 'test_files', 'multiple_1_level_missing.csv'))
+    end
     it 'returns the right data for a single object' do
       test_data = [{ 'Col_1' => 1, 'Col_2' => 'Cheese', 'Col_3' => true }]
       csv = HashConverter.call(test_data)
@@ -48,6 +51,16 @@ describe 'HashConverter' do
 
       expect(CSV.parse(csv)).to eq CSV.parse(multiple_1_level)
     end
+
+    it 'returns the right data when keys are missing in some objects' do
+      test_data = [
+        { 'Col_1' => 1, 'Col_2' => 'Cheese', 'Col_3' => true },
+        { 'Col_2' => 'Cheese' }
+      ]
+      csv = HashConverter.call(test_data)
+
+      expect(CSV.parse(csv)).to eq CSV.parse(multiple_1_level_missing)
+    end
   end
 
   context 'when argument is valid for multi-level hash' do
@@ -56,6 +69,9 @@ describe 'HashConverter' do
     end
     let(:multiple_multi_level) do
       File.new(File.join(File.dirname(__FILE__), 'test_files', 'multiple_multi_level.csv'))
+    end
+    let(:multiple_multi_level_missing) do
+      File.new(File.join(File.dirname(__FILE__), 'test_files', 'multiple_multi_level_missing.csv'))
     end
 
     it 'returns the right data for a single object' do
@@ -118,6 +134,27 @@ describe 'HashConverter' do
       csv = HashConverter.call(test_data)
 
       expect(CSV.parse(csv)).to eq CSV.parse(multiple_multi_level)
+    end
+
+    it 'returns the right data when keys are missing in some objects' do
+      test_data = [
+        { 'Col_1' => 1,
+          'Col_2' => 'Cheese',
+          'Col_3' => {
+            'Col_3a' => 'Sub1',
+            'Col_3b' => 'Sub2'
+          }
+        },
+        {
+          'Col_3' => {
+            'Col_3b' => 'Sub4'
+          },
+          'Col_1' => 2
+        }
+      ]
+      csv = HashConverter.call(test_data)
+
+      expect(CSV.parse(csv)).to eq CSV.parse(multiple_multi_level_missing)
     end
   end
 end

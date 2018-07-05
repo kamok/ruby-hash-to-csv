@@ -23,8 +23,8 @@ class HashConverter
       end
     end
 
-  rescue StandardError => e
-    'An error has occured: ' + e.message
+  rescue RuntimeError => e
+    p 'An error has occured: ' + e.message
   end
 
   private_class_method
@@ -41,5 +41,3 @@ class HashConverter
     end
   end
 end
-
-# csv = HashConverter.call()
