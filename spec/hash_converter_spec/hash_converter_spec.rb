@@ -1,4 +1,4 @@
-require_relative '../lib/hash_converter'
+require_relative '../../lib/hash_converter'
 require 'csv'
 
 describe 'HashConverter' do
@@ -15,15 +15,18 @@ describe 'HashConverter' do
     end
   end
 
-  context 'when argument is valid' do
+  context 'when argument is valid for one level hash' do
+    let(:single_1_level) do
+      File.new(File.join(File.dirname(__FILE__), 'test_files', 'single_1_level.csv'))
+    end
+    let(:multiple_1_level) do
+      File.new(File.join(File.dirname(__FILE__), 'test_files', 'multiple_1_level.csv'))
+    end
     it 'returns the right data for a single object' do
       test_data = [{ 'Col_1' => 1, 'Col_2' => 'Cheese', 'Col_3' => true }]
       csv = HashConverter.call(test_data)
-      expectation = [
-        ['Col_1', 'Col_2', 'Col_3'],
-        ['1', 'Cheese', 'true']
-      ]
-      expect(CSV.parse(csv)).to eq expectation
+
+      expect(CSV.parse(csv)).to eq CSV.parse(single_1_level)
     end
 
     it 'returns the right data for multiple objects' do
@@ -32,12 +35,8 @@ describe 'HashConverter' do
         { 'Col_1' => 2, 'Col_2' => 'Cheese', 'Col_3' => false }
       ]
       csv = HashConverter.call(test_data)
-      expectation = [
-        ['Col_1', 'Col_2', 'Col_3'],
-        ['1', 'Cheese', 'true'],
-        ['2', 'Cheese', 'false']
-      ]
-      expect(CSV.parse(csv)).to eq expectation
+
+      expect(CSV.parse(csv)).to eq CSV.parse(multiple_1_level)
     end
   end
 end
